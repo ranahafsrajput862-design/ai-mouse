@@ -1,232 +1,218 @@
-# AI Virtual Mouse
+# ✋ AI Hand Mouse Controller
 
-Control your computer mouse cursor using a **blue object** and your webcam! Point a blue pen, marker, or bottle cap at your camera, and watch the cursor follow it in real-time.
+Control your computer mouse using hand gestures through your webcam! No physical mouse needed - just use your hand movements to navigate, click, and zoom.
 
-## 🎯 Features
+![Python](https://img.shields.io/badge/python-3.7+-blue.svg)
+![Flask](https://img.shields.io/badge/flask-2.0+-green.svg)
+![OpenCV](https://img.shields.io/badge/opencv-4.0+-red.svg)
+![MediaPipe](https://img.shields.io/badge/mediapipe-latest-orange.svg)
 
-- 🎥 **Live Webcam Feed** – See what the app sees in your browser
-- 🖱️ **Move Cursor** – Move a blue object to control the mouse
-- 🖱️‍➡️ **Click** – Move the object closer to click
-- 🎨 **HSV Tuning** – Adjust color detection in real-time with sliders
-- 📺 **Mask Preview** – See exactly what the app detects
-- 🖥️ **Web-Based** – Works in any modern browser
+## 🌟 Features
 
----
+- **Real-time Hand Tracking** - Uses Google MediaPipe for accurate hand detection
+- **Mouse Movement** - Control cursor with index finger pointing
+- **Left Click** - Pinch thumb and index finger together
+- **Right Click** - Show three fingers (index, middle, ring)
+- **Zoom In/Out** - Spread all fingers wide or bring them together
+- **Beautiful UI** - Modern, animated interface with glass-morphism design
+- **Privacy First** - All processing happens locally on your device
+
+## 🎮 Hand Gestures
+
+| Gesture | Action | How to Perform |
+|---------|--------|----------------|
+| 👆 **Move** | Control cursor position | Point with index finger only |
+| 🤏 **Left Click** | Perform left mouse click | Thumb + index finger up, then pinch together |
+| ✌️ **Right Click** | Perform right mouse click | Show index, middle, and ring fingers together |
+| ✋ **Zoom In** | Zoom into content | Spread all 5 fingers wide apart |
+| ✋ **Zoom Out** | Zoom out of content | Bring all 5 fingers closer together |
 
 ## 📋 Prerequisites
 
-Before you start, make sure you have:
+- Python 3.7 or higher
+- Webcam
+- Windows/Mac/Linux operating system
 
-- **Python 3.7 or later** ([download here](https://www.python.org/downloads/))
-- A **webcam** (built-in or USB)
-- A **blue object** (blue pen, bottle cap, sticky note, etc.)
-- **Internet browser** (Chrome, Firefox, Safari, Edge, etc.)
+## 🚀 Installation
 
----
-
-## 🚀 Quick Start (5 minutes)
-
-### Step 1: Download the Project
+### 1. Clone or Download the Repository
 
 ```bash
-git clone https://github.com/ranahafsrajput862-design/ai-mouse.git
-cd ai-mouse
+cd ai-mouse-main
 ```
 
-Or download as ZIP and extract it.
-
-### Step 2: Create a Virtual Environment (Recommended)
-
-This isolates the project and prevents conflicts with other Python projects.
-
-**On Windows:**
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-**On macOS/Linux:**
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-After running this, you should see `(.venv)` at the start of your terminal line.
-
-### Step 3: Install Dependencies
+### 2. Install Required Packages
 
 ```bash
 pip install -r requirements.txt
 ```
 
-This installs all required libraries (Flask, OpenCV, PyAutoGUI, NumPy, etc.).
+The required packages are:
+- Flask - Web framework
+- opencv-python - Computer vision
+- mediapipe - Hand tracking
+- pyautogui - Mouse control
+- numpy - Numerical computations
 
-### Step 4: Run the Server
+### 3. Verify Installation
+
+Check if all packages are installed correctly:
+
+```bash
+python -c "import flask, cv2, mediapipe, pyautogui, numpy; print('All packages installed successfully!')"
+```
+
+## 🎯 Usage
+
+### Starting the Application
+
+1. **Run the application:**
 
 ```bash
 python app.py
 ```
 
-You should see output like:
-```
- * Running on http://127.0.0.1:5000
-```
-
-### Step 5: Open in Browser
-
-Open your web browser and go to:
+2. **Open your web browser and navigate to:**
 
 ```
-http://127.0.0.1:5000
+http://localhost:5000
 ```
 
-You should see the AI Virtual Mouse interface with a video feed.
+3. **Allow camera access when prompted**
 
----
+4. **Position your hand in front of the camera**
+   - Keep hand 1-2 feet away from camera
+   - Ensure good lighting
+   - Use a clean background for better detection
 
-## 📖 How to Use
+5. **Start controlling!**
+   - The purple box shows the tracking area
+   - Green lines show your hand skeleton
+   - Text on screen shows the current gesture
 
-### 1. **Allow Camera Access**
-   - Your browser will ask for permission to access your webcam
-   - Click **"Allow"** to proceed
+### Stopping the Application
 
-### 2. **Show a Blue Object**
-   - Hold a **blue object** (pen, marker, bottle cap) in front of your camera
-   - The app will detect it and show a green circle around it
+Press `Ctrl + C` in the terminal where the app is running.
 
-### 3. **Move the Cursor**
-   - Move your blue object around – the mouse cursor follows it
-   - The cursor position is shown on the overlay
+## 💡 Tips for Best Results
 
-### 4. **Click**
-   - Move the object **closer** to the camera (make it bigger)
-   - When the area is large enough, you'll see "CLICK" text
-   - The cursor will click automatically
-
-### 5. **Adjust Color Detection** (if detection isn't working)
-   - Use the **HSV sliders** on the right side
-   - Adjust them until the **mask preview** shows your object in white
-   - Click **"Apply HSV"** to save changes
-
-### 6. **Enable Mouse Control** (Optional)
-   - Check the **"Enable Mouse"** checkbox to actually control your computer's mouse
-   - Leave unchecked to just test detection
-
----
+- ✅ **Good Lighting** - Ensure your hand is well-lit
+- ✅ **Distance** - Keep hand 1-2 feet from camera
+- ✅ **Clear Background** - Solid color backgrounds work best
+- ✅ **Stable Position** - Keep camera stable for better tracking
+- ✅ **Practice** - Try different gestures to get comfortable
 
 ## 🛠️ Troubleshooting
 
-### Camera Not Showing
-- Make sure you allowed browser camera access
-- Check if another app is using your webcam
-- Try refreshing the browser (`Ctrl+R` or `Cmd+R`)
+### Camera Not Opening
 
-### Blue Object Not Detected
-- Make sure your object is **bright blue** (not dark or purple)
-- Adjust the **HSV sliders** to match your object's color
-- The **mask preview** should show your object in white
+```bash
+# Try specifying camera index
+# Edit app.py, line 27:
+cap = cv2.VideoCapture(0)  # Try changing 0 to 1 or 2
+```
+
+### Hand Not Detected
+
+- Check lighting conditions
+- Move hand closer to camera
+- Ensure hand is fully visible
+- Try different hand positions
 
 ### Mouse Not Moving
-- Check the **"Enable Mouse"** checkbox
-- Make sure you're in a supported operating system (Windows, macOS, Linux)
-- Try running the app in a different browser
 
-### "Camera access denied" Error
-- Your browser blocked camera access
-- Go to browser settings → Privacy → Camera → Allow this site
+1. Check if "Mouse Control" toggle is enabled on the interface
+2. Verify PyAutoGUI permissions on your system
+3. On macOS, grant accessibility permissions in System Preferences
 
----
+### Port Already in Use
+
+```bash
+# Change port in app.py, last line:
+app.run(debug=False, host='0.0.0.0', port=5001)  # Use different port
+```
 
 ## 📁 Project Structure
 
 ```
-ai-mouse/
-├── app.py                 # Main Flask server
-├── color_tracking.py      # Blue object detection logic
-├── controller.py          # Mouse movement/click control
-├── requirements.txt       # Python dependencies
-├── README.md             # This file
-└── templates/
-    └── index.html        # Web interface (HTML/CSS/JavaScript)
+ai-mouse-main/
+├── app.py                    # Main Flask application
+├── hand_tracking.py          # Hand detection and gesture recognition
+├── controller.py             # Mouse control logic
+├── color_tracking.py         # Legacy color tracking (not used)
+├── requirements.txt          # Python dependencies
+├── README.md                 # This file
+├── templates/
+│   └── index.html           # Web interface
+└── hand_landmarker.task     # MediaPipe model (auto-downloaded)
 ```
 
----
+## 🔧 Configuration
 
-## 💻 System Requirements
+### Adjusting Sensitivity
 
-| Requirement | Minimum | Recommended |
-|---|---|---|
-| Python | 3.7 | 3.9+ |
-| RAM | 512 MB | 2 GB |
-| CPU | Dual Core | Quad Core |
-| Webcam | 720p | 1080p |
-| Internet | None | Broadband |
+Edit `hand_tracking.py` to adjust gesture detection:
 
----
-
-## 🎓 How It Works (Technical)
-
-1. **Browser captures webcam video** using HTML5 `getUserMedia`
-2. **Sends frames to server** via `/frame` endpoint
-3. **Server detects blue objects** using HSV color space and OpenCV
-4. **Calculates cursor position** based on object location
-5. **Moves mouse** using PyAutoGUI library
-6. **Returns detection data** (with mask preview) back to browser
-
----
-
-## ⌨️ Keyboard Shortcuts
-
-- `Ctrl+C` – Stop the server (in terminal)
-- `F5` – Reload browser
-- `F12` – Open developer console (for debugging)
-
----
-
-## 🐛 Common Issues & Fixes
-
-| Issue | Solution |
-|---|---|
-| `ModuleNotFoundError: No module named 'flask'` | Run `pip install -r requirements.txt` |
-| `Port 5000 already in use` | Close other apps using port 5000, or change port in `app.py` |
-| `Permission denied` (macOS/Linux) | Run `chmod +x app.py` before running |
-| Slow detection | Reduce webcam resolution in browser settings |
-
----
-
-## 📝 Configuration
-
-Edit **environment variables** before running:
-
-```bash
-# Use browser camera (default)
-set VIDEO_SOURCE=browser
-
-# Enable mouse control (default: disabled for safety)
-set PERFORM_MOUSE=false
-```
-
-Or in `app.py`, change these lines at the top:
 ```python
-VIDEO_SOURCE = os.environ.get('VIDEO_SOURCE', 'browser')
-perform_mouse = os.environ.get('PERFORM_MOUSE', 'false')
+# Line 171 - Pinch distance for left click
+if thumb_index_dist < 40:  # Decrease for tighter pinch, increase for looser
+
+# Line 189 - Zoom sensitivity
+if abs(diff) > 10:  # Increase for less sensitivity, decrease for more
 ```
 
+### Changing Screen Resolution
+
+Edit `app.py`:
+
+```python
+# Lines 11-12
+wCam, hCam = 640, 480  # Change to your preferred resolution
+```
+
+## 🎨 Features
+
+- **Modern UI** with animated gradients and glass-morphism effects
+- **Real-time gesture feedback** displayed on video
+- **Smooth mouse movement** with interpolation
+- **Click cooldown** to prevent accidental double-clicks
+- **Responsive design** works on desktop and mobile browsers
+
+## 🔒 Privacy & Security
+
+- All processing happens **locally on your device**
+- No video data is sent to any external servers
+- Camera feed is only processed in real-time
+- No data is stored or recorded
+
+## 🤝 Contributing
+
+Feel free to:
+- Report bugs
+- Suggest new features
+- Submit pull requests
+- Improve documentation
+
+## 📝 License
+
+This project is open source and available for educational purposes.
+
+## 🙏 Acknowledgments
+
+- **Google MediaPipe** - Hand tracking technology
+- **OpenCV** - Computer vision library
+- **Flask** - Web framework
+
+## 📧 Support
+
+If you encounter any issues:
+1. Check the troubleshooting section above
+2. Ensure all dependencies are installed correctly
+3. Verify your camera is working properly
+4. Check Python version compatibility
+
 ---
 
-## 📞 Support
+**Made with ✋ and ❤️**
 
-If you encounter issues:
-1. Check the **browser console** (`F12` → Console tab)
-2. Check the **terminal output** for error messages
-3. Open an issue on GitHub with error details
-
----
-
-## 📜 License
-
-This project is open-source and available for personal and educational use.
-
----
-
-**Enjoy controlling your mouse with AI! 🎉**
+Enjoy controlling your computer with hand gestures! 🎉

@@ -39,14 +39,14 @@ class MouseController:
 
         self.plocX, self.plocY = self.clocX, self.clocY
 
-    def click(self):
+    def click(self, button='left'):
         if not self.headless:
             try:
-                pyautogui.click()
+                pyautogui.click(button=button)
             except Exception:
                 pass
         else:
-            print("[MouseController] headless click")
+            print(f"[MouseController] headless {button} click")
 
     def scroll(self, direction):
         if not self.headless:
@@ -56,3 +56,16 @@ class MouseController:
                 pass
         else:
             print(f"[MouseController] headless scroll {direction}")
+    
+    def zoom(self, zoom_type):
+        """Simulate zoom using Ctrl + scroll or Ctrl + +/-"""
+        if not self.headless:
+            try:
+                if zoom_type == 'in':
+                    pyautogui.scroll(3)  # Scroll up to zoom in
+                else:
+                    pyautogui.scroll(-3)  # Scroll down to zoom out
+            except Exception:
+                pass
+        else:
+            print(f"[MouseController] headless zoom {zoom_type}")
