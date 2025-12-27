@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Hand Mouse Controller</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        html, body { 
+            height: 100vh; 
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1419 100%);
+            color: #fff;
+            position: relative;
+        }
+        
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 212, 166, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.05) 0%, transparent 50%);
+            animation: drift 20s ease-in-out infinite;
+            z-index: 0;
+        }
+        
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-30px, -30px); }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 166, 0.5));
+        }
+        
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #00d4a6 0%, #00ffc8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            color: #8892a6;
+            margin-top: 4px;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(0, 212, 166, 0.1);
+            border: 2px solid rgba(0, 212, 166, 0.3);
+            border-radius: 50px;
+            font-weight: 600;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 166, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(0, 212, 166, 0); }
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #00d4a6;
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Main Content */
+        .content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 20px;
+            overflow: hidden;
+        }
+        
+        /* Video Section */
+        .video-section {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-container {
+            flex: 1;
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 
+                0 0 30px rgba(0, 212, 166, 0.2),
+                inset 0 0 50px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 212, 166, 0.3);
+        }
+        
+        #videoFeed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .video-controls {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+        
+        .toggle-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-control:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 212, 166, 0.4);
+        }
+        
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 34px;
+            transition: 0.4s;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.4s;
+        }
+        
+        input:checked + .slider {
+            background: linear-gradient(135deg, #00d4a6, #00ffc8);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(0, 212, 166, 0.3); border-radius: 10px; }
+        
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00d4a6;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .gestures {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .gesture-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .gesture-card:hover {
+            background: linear-gradient(135deg, rgba(0, 212, 166, 0.1), rgba(0, 255, 200, 0.05));
+            border-color: rgba(0, 212, 166, 0.4);
+            transform: translateX(5px);
+        }
+        
+        .gesture-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .gesture-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 8px rgba(0, 212, 166, 0.3));
+        }
+        
+        .gesture-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .gesture-desc {
+            font-size: 0.85rem;
+            color: #8892a6;
+            line-height: 1.5;
+            padding-left: 44px;
+        }
+        
+        .tips {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(138, 43, 226, 0.08);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            border-radius: 12px;
+        }
+        
+        .tips ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 12px;
+        }
+        
+        .tips li {
+            padding: 6px 0;
+            color: #b8c1d3;
+            font-size: 0.85rem;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .tips li:before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #00d4a6;
+        }
+        
+        @media (max-width: 1200px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <div class="logo-icon">✋</div>
+        <div>
+          <h1>AI Hand Controller</h1>
+          <div class="subtitle">Control your computer with gestures</div>
+        </div>
+      </div>
+      <div class="status">
+        <div class="status-dot"></div>
+        <span id="statusText">Active</span>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <!-- Video Section -->
+      <div class="video-section">
+        <div class="video-container">
+          <img id="videoFeed" src="{{ url_for('video_feed') }}" alt="Camera Feed">
+        </div>
+        <div class="video-controls">
+          <label class="toggle-control">
+            <span style="font-weight: 600;">Mouse Control</span>
+            <label class="switch">
+              <input type="checkbox" id="enableMouse" checked>
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="section-title">🎮 Gestures</div>
+        <div class="gestures">
+          <div class="gesture-card">
+            <div class="gesture-header">
+              <div class="gesture-icon">👆</div>
+              <div class="gesture-name">Move</div>
+            </div>
+            <div class="gesture-desc">Point with index finger to control cursor position</div>
+          </div>
+
+          <div class="gesture-card">
+            <div class="gesture-header">
+              <div class="gesture-icon">🤏</div>
+              <div class="gesture-name">Left Click</div>
+            </div>
+            <div class="gesture-desc">Thumb + index up, pinch together to click</div>
+          </div>
+
+          <div class="gesture-card">
+            <div class="gesture-header">
+              <div class="gesture-icon">✌️</div>
+              <div class="gesture-name">Right Click</div>
+            </div>
+            <div class="gesture-desc">Show index, middle & ring fingers together</div>
+          </div>
+
+          <div class="gesture-card">
+            <div class="gesture-header">
+              <div class="gesture-icon">✋</div>
+              <div class="gesture-name">Zoom</div>
+            </div>
+            <div class="gesture-desc">All fingers open - spread to zoom in, close to zoom out</div>
+          </div>
+        </div>
+
+        <div class="tips">
+          <div style="font-weight: 600; color: #00d4a6; margin-bottom: 8px;">💡 Pro Tips</div>
+          <ul>
+            <li>Good lighting improves tracking</li>
+            <li>Keep hand 1-2 feet from camera</li>
+            <li>Clear background works best</li>
+            <li>Watch on-screen gesture labels</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const statusText = document.getElementById('statusText');
+    const enableMouseCheckbox = document.getElementById('enableMouse');
+
+    // Update status
+    setInterval(() => {
+      statusText.textContent = enableMouseCheckbox.checked ? 'Mouse Control Active' : 'Mouse Control Disabled';
+    }, 1000);
+
+    // Handle mouse enable/disable
+    enableMouseCheckbox.addEventListener('change', async () => {
+      try {
+        const resp = await fetch('/set_mouse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ perform: enableMouseCheckbox.checked })
+        });
+        const data = await resp.json();
+        console.log('Mouse control:', data);
+      } catch (err) {
+        console.error('Error toggling mouse:', err);
+      }
+    });
+
+    // Initialize
+    window.addEventListener('load', () => {
+      statusText.textContent = 'Camera Loading...';
+      setTimeout(() => {
+        statusText.textContent = 'Mouse Control Active';
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
