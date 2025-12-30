@@ -38,10 +38,11 @@ perform_mouse = os.environ.get('PERFORM_MOUSE', 'true').lower() in ('1', 'true',
 # Gesture state tracking
 prev_gesture = None
 click_cooldown = 0
+current_hand_data = {'found': False, 'cx': 0, 'cy': 0, 'gesture': 'none'}
 
 
 def generate_frames():
-    global prev_gesture, click_cooldown
+    global prev_gesture, click_cooldown, current_hand_data
     
     while True:
         if cap is None:
@@ -58,33 +59,46 @@ def generate_frames():
         # Get hand gesture
         gesture_info = tracker.getGesture(img)
         
-        if gesture_info is not None and perform_mouse:
+        if gesture_info is not None:
             cx, cy = gesture_info['x'], gesture_info['y']
             gesture = gesture_info['gesture']
             
-            # Always move mouse
-            mouse.move_mouse(cx, cy, wCam, hCam)
+            # Update current hand data for frontend
+            current_hand_data = {
+                'found': True,
+                'cx': int(cx),
+                'cy': int(cy),
+                'gesture': gesture,
+                'width': wCam,
+                'height': hCam
+            }
             
-            # Handle click cooldown
-            if click_cooldown > 0:
-                click_cooldown -= 1
-            
-            # Handle gestures
-            if gesture == 'left_click' and click_cooldown == 0:
-                mouse.click('left')
-                click_cooldown = 15  # Prevent multiple clicks
+            if perform_mouse:
+                # Always move mouse
+                mouse.move_mouse(cx, cy, wCam, hCam)
                 
-            elif gesture == 'right_click' and click_cooldown == 0:
-                mouse.click('right')
-                click_cooldown = 15
+                # Handle click cooldown
+                if click_cooldown > 0:
+                    click_cooldown -= 1
                 
-            elif gesture == 'zoom_in':
-                mouse.zoom('in')
+                # Handle gestures
+                if gesture == 'left_click' and click_cooldown == 0:
+                    mouse.click('left')
+                    click_cooldown = 15  # Prevent multiple clicks
+                    
+                elif gesture == 'right_click' and click_cooldown == 0:
+                    mouse.click('right')
+                    click_cooldown = 15
+                    
+                elif gesture == 'zoom_in':
+                    mouse.zoom('in')
+                    
+                elif gesture == 'zoom_out':
+                    mouse.zoom('out')
                 
-            elif gesture == 'zoom_out':
-                mouse.zoom('out')
-            
-            prev_gesture = gesture
+                prev_gesture = gesture
+        else:
+            current_hand_data = {'found': False, 'cx': 0, 'cy': 0, 'gesture': 'none'}
         
         ret, buffer = cv2.imencode('.jpg', img)
         frame = buffer.tobytes()
@@ -177,6 +191,12 @@ def set_mouse():
 def set_hsv():
     # This endpoint is no longer needed for hand tracking but kept for compatibility
     return jsonify({'ok': True, 'message': 'Hand tracking mode - HSV not applicable'})
+
+
+@app.route('/hand_position', methods=['GET'])
+def hand_position():
+    """Returns current hand position and gesture for web UI interaction"""
+    return jsonify(current_hand_data)
 
 
 if __name__ == "__main__":
